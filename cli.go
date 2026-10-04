@@ -89,7 +89,15 @@ func runSet(name string, extra []string, opt options) int {
 }
 
 func runChoose(args []string) int {
-	return fail("暂未实现")
+	if len(args) == 0 {
+		return fail("用法: decision choose <选项> [<选项>...]")
+	}
+	result, err := pick(args)
+	if err != nil {
+		return fail(err.Error())
+	}
+	fmt.Fprintln(os.Stdout, render("选择", result))
+	return 0
 }
 
 func fail(msg string) int {
