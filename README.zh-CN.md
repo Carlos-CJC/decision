@@ -47,6 +47,8 @@ go build -o decision ./cmd/decision
 | --- | --- |
 | `decision <集合名>` | 运行一个已保存的决策集合 |
 | `decision choose <选项> [<选项>...]` | 临时选择,无需配置文件 |
+| `decision list` | 列出所有可用集合 |
+| `decision show <集合名>` | 查看某个集合的详细配置 |
 | `decision --config-dir <path> <集合名>` | 使用自定义配置目录 |
 | `decision help` | 显示帮助(同 `--help`、`-h`) |
 | `decision version` | 显示版本(同 `--version`) |
@@ -84,6 +86,25 @@ decision breakfast   # -> 早餐:包子
 4. `./config/`
 
 也可直接传入路径,如 `decision ./my.yaml`。
+
+### 查看已有集合
+
+```console
+$ decision list
+breakfast  早餐 (4)
+
+$ decision show breakfast
+命令:  breakfast
+名称:  早餐
+类型:  choice
+路径:  config/breakfast.yaml
+
+选项 (4):
+  - 面包
+  - 包子
+  - 麦片
+  - 鸡蛋
+```
 
 ## 项目结构
 
