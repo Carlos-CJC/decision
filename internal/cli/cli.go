@@ -18,8 +18,8 @@ const usage = `Decision CLI —— 把不值得消耗注意力的小选择,交�
 用法:
   decision <集合名>                   运行一个已保存的决策集合
   decision choose <选项> [<选项>...]  临时选择,无需配置文件
-  decision --help                     显示帮助
-  decision --version                  显示版本
+  decision help                       显示帮助(同 --help)
+  decision version                    显示版本(同 --version)
 
 参数:
   --config-dir <path>   覆盖配置目录
@@ -69,10 +69,18 @@ func Run(args []string) int {
 		fmt.Fprint(os.Stderr, usage)
 		return 1
 	}
-	if rest[0] == "choose" {
+	switch rest[0] {
+	case "choose":
 		return runChoose(rest[1:])
+	case "help":
+		fmt.Fprint(os.Stdout, usage)
+		return 0
+	case "version":
+		fmt.Fprintln(os.Stdout, "decision "+Version)
+		return 0
+	default:
+		return runSet(rest[0], rest[1:], opt)
 	}
-	return runSet(rest[0], rest[1:], opt)
 }
 
 func runSet(name string, extra []string, opt options) int {

@@ -49,8 +49,8 @@ go build -o decision ./cmd/decision
 | `decision <name>` | Run a saved decision set |
 | `decision choose <option> [<option>...]` | Pick one on the fly, no config needed |
 | `decision --config-dir <path> <name>` | Use a custom config directory |
-| `decision --help` | Show help |
-| `decision --version` | Show version |
+| `decision help` | Show help (also `--help`, `-h`) |
+| `decision version` | Show version (also `--version`) |
 
 ### Saved sets
 
