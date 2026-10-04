@@ -80,7 +80,11 @@ func runSet(name string, extra []string, opt options) int {
 	if err != nil {
 		return fail(err.Error())
 	}
-	fmt.Fprintln(os.Stdout, cfg.Name)
+	result, err := pick(cfg.Options)
+	if err != nil {
+		return fail(err.Error())
+	}
+	fmt.Fprintln(os.Stdout, render(cfg.Name, result))
 	return 0
 }
 
