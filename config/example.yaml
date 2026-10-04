@@ -1,0 +1,13 @@
+# Decision CLI 配置模板
+# 用法:复制成 <集合名>.yaml(如 breakfast.yaml),再执行 `decision breakfast`。
+#
+# name    —— 必填,集合的展示名,用于默认输出模板 {name}:{result}
+# options —— 必填,至少一项,等概率随机选择
+
+name: 早餐
+
+options:
+  - 面包
+  - 包子
+  - 麦片
+  - 鸡蛋

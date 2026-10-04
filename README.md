@@ -39,7 +39,7 @@ go build -o decision
 
 ### Saved sets
 
-Define a set in a YAML file, e.g. `breakfast.yaml`:
+Copy the template [`config/example.yaml`](config/example.yaml) and edit it. A set is a YAML file, e.g. `breakfast.yaml`:
 
 ```yaml
 name: 早餐
@@ -116,7 +116,8 @@ go build -o decision
 
 ### 已保存的集合
 
-用 YAML 文件定义一个集合,例如 `breakfast.yaml`:
+复制模板 [`config/example.yaml`](config/example.yaml) 后修改即可。一个集合就是一个
+YAML 文件,例如 `breakfast.yaml`:
 
 ```yaml
 name: 早餐

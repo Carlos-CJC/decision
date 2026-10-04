@@ -2,7 +2,9 @@
 /decision
 /dist/
 
-# 本地个人配置
+# 个人配置:仅保留模板 example.yaml,其余本地配置不入库
+/config/*.yaml
+!/config/example.yaml
 /config/local/
 
 # 编辑器 / 系统
