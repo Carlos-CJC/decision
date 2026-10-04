@@ -1,0 +1,11 @@
+# 编译产物
+/decision
+/dist/
+
+# 本地个人配置
+/config/local/
+
+# 编辑器 / 系统
+.DS_Store
+.idea/
+.vscode/
