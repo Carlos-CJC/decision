@@ -69,7 +69,19 @@ func run(args []string) int {
 }
 
 func runSet(name string, extra []string, opt options) int {
-	return fail("暂未实现")
+	if len(extra) > 0 {
+		return fail(fmt.Sprintf("%q 不接受额外参数: %s", name, strings.Join(extra, " ")))
+	}
+	path, err := resolveConfig(name, opt.configDir)
+	if err != nil {
+		return fail(err.Error())
+	}
+	cfg, err := loadConfig(path)
+	if err != nil {
+		return fail(err.Error())
+	}
+	fmt.Fprintln(os.Stdout, cfg.Name)
+	return 0
 }
 
 func runChoose(args []string) int {
