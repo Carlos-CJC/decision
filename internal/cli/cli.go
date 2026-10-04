@@ -1,10 +1,17 @@
-package main
+// Package cli 负责命令行参数解析、命令分发与结果渲染。
+package cli
 
 import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/Carlos-CJC/decision/internal/chooser"
+	"github.com/Carlos-CJC/decision/internal/config"
 )
+
+// Version 是 CLI 版本号。
+const Version = "0.1.0"
 
 const usage = `Decision CLI —— 把不值得消耗注意力的小选择,交给一次命令。
 
@@ -32,7 +39,8 @@ type options struct {
 	configDir string
 }
 
-func run(args []string) int {
+// Run 解析参数并执行对应命令,返回进程退出码。
+func Run(args []string) int {
 	var opt options
 	var rest []string
 
@@ -42,7 +50,7 @@ func run(args []string) int {
 			fmt.Fprint(os.Stdout, usage)
 			return 0
 		case a == "--version":
-			fmt.Fprintln(os.Stdout, "decision "+version)
+			fmt.Fprintln(os.Stdout, "decision "+Version)
 			return 0
 		case a == "--config-dir":
 			if i+1 >= len(args) {
@@ -61,7 +69,6 @@ func run(args []string) int {
 		fmt.Fprint(os.Stderr, usage)
 		return 1
 	}
-
 	if rest[0] == "choose" {
 		return runChoose(rest[1:])
 	}
@@ -72,18 +79,20 @@ func runSet(name string, extra []string, opt options) int {
 	if len(extra) > 0 {
 		return fail(fmt.Sprintf("%q 不接受额外参数: %s", name, strings.Join(extra, " ")))
 	}
-	path, err := resolveConfig(name, opt.configDir)
+
+	path, err := config.Resolve(name, opt.configDir)
 	if err != nil {
 		return fail(err.Error())
 	}
-	cfg, err := loadConfig(path)
+	cfg, err := config.Load(path)
 	if err != nil {
 		return fail(err.Error())
 	}
-	result, err := pick(cfg.Options)
+	result, err := chooser.Pick(cfg.Options)
 	if err != nil {
 		return fail(err.Error())
 	}
+
 	fmt.Fprintln(os.Stdout, render(cfg.Name, result))
 	return 0
 }
@@ -92,12 +101,17 @@ func runChoose(args []string) int {
 	if len(args) == 0 {
 		return fail("用法: decision choose <选项> [<选项>...]")
 	}
-	result, err := pick(args)
+	result, err := chooser.Pick(args)
 	if err != nil {
 		return fail(err.Error())
 	}
 	fmt.Fprintln(os.Stdout, render("选择", result))
 	return 0
+}
+
+// render 按默认模板 {name}:{result} 生成单行输出。
+func render(name, result string) string {
+	return fmt.Sprintf("%s:%s", name, result)
 }
 
 func fail(msg string) int {
