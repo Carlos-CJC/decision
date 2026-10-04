@@ -48,8 +48,8 @@ go build -o decision ./cmd/decision
 | `decision <集合名>` | 运行一个已保存的决策集合 |
 | `decision choose <选项> [<选项>...]` | 临时选择,无需配置文件 |
 | `decision --config-dir <path> <集合名>` | 使用自定义配置目录 |
-| `decision --help` | 显示帮助 |
-| `decision --version` | 显示版本 |
+| `decision help` | 显示帮助(同 `--help`、`-h`) |
+| `decision version` | 显示版本(同 `--version`) |
 
 ### 已保存的集合
 
