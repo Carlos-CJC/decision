@@ -1,4 +1,5 @@
-package main
+// Package config 负责决策集合配置的定位与加载。
+package config
 
 import (
 	"fmt"
@@ -16,7 +17,8 @@ type Config struct {
 	Options []string `yaml:"options"`
 }
 
-func loadConfig(path string) (*Config, error) {
+// Load 读取并校验一个配置文件。
+func Load(path string) (*Config, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return nil, fmt.Errorf("读取配置失败: %w", err)
@@ -35,10 +37,10 @@ func loadConfig(path string) (*Config, error) {
 	return &cfg, nil
 }
 
-// resolveConfig 把集合名或显式路径解析为可读的配置文件路径。
+// Resolve 把集合名或显式路径解析为可读的配置文件路径。
 // 查找顺序见 introduction.md 4.2:显式路径 → --config-dir → $DECISION_CONFIG_DIR
 // → ~/.config/decision/ → ./config/。
-func resolveConfig(name, configDir string) (string, error) {
+func Resolve(name, configDir string) (string, error) {
 	if looksLikePath(name) {
 		if fi, err := os.Stat(name); err == nil && !fi.IsDir() {
 			return name, nil
