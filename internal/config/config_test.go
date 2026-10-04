@@ -3,6 +3,7 @@ package config
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -80,5 +81,43 @@ func TestResolveExplicitPath(t *testing.T) {
 func TestResolveMissing(t *testing.T) {
 	if _, err := Resolve("definitely-not-a-real-set-xyz", t.TempDir()); err == nil {
 		t.Error("Resolve(missing) = nil error, want error")
+	}
+}
+
+func TestAvailable(t *testing.T) {
+	t.Setenv("HOME", t.TempDir())
+	t.Setenv("DECISION_CONFIG_DIR", "")
+
+	dir := t.TempDir()
+	write(t, dir, "breakfast.yaml", "name: 早餐\noptions:\n  - a\n")
+	write(t, dir, "dinner.yml", "name: 晚餐\noptions:\n  - b\n")
+
+	entries := Available(dir)
+	if len(entries) != 2 {
+		t.Fatalf("Available = %v, want 2 entries", entries)
+	}
+	if entries[0].Command != "breakfast" || entries[1].Command != "dinner" {
+		t.Errorf("Available commands = [%s %s], want [breakfast dinner]",
+			entries[0].Command, entries[1].Command)
+	}
+	if !strings.HasSuffix(entries[0].Path, "breakfast.yaml") {
+		t.Errorf("Path = %q, want suffix breakfast.yaml", entries[0].Path)
+	}
+}
+
+func TestAvailableDedupe(t *testing.T) {
+	t.Setenv("HOME", t.TempDir())
+
+	dirA, dirB := t.TempDir(), t.TempDir()
+	write(t, dirA, "x.yaml", "name: A\noptions:\n  - a\n")
+	write(t, dirB, "x.yaml", "name: B\noptions:\n  - b\n")
+	t.Setenv("DECISION_CONFIG_DIR", dirB)
+
+	entries := Available(dirA)
+	if len(entries) != 1 {
+		t.Fatalf("Available = %v, want 1 entry (deduped)", entries)
+	}
+	if want := filepath.Join(dirA, "x.yaml"); entries[0].Path != want {
+		t.Errorf("Path = %q, want %q (higher-priority dir wins)", entries[0].Path, want)
 	}
 }

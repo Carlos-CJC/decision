@@ -3,6 +3,7 @@ package cli
 import (
 	"io"
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 )
@@ -71,5 +72,39 @@ func TestRunChooseNoArgs(t *testing.T) {
 func TestRunNoArgs(t *testing.T) {
 	if code, _ := capture(t, func() int { return Run(nil) }); code != 1 {
 		t.Errorf("Run(nil) code = %d, want 1", code)
+	}
+}
+
+func TestRunList(t *testing.T) {
+	t.Setenv("HOME", t.TempDir())
+	dir := t.TempDir()
+	os.WriteFile(filepath.Join(dir, "breakfast.yaml"), []byte("name: 早餐\noptions:\n  - a\n"), 0o644)
+
+	code, out := capture(t, func() int { return Run([]string{"--config-dir", dir, "list"}) })
+	if code != 0 {
+		t.Errorf("Run(list) code = %d, want 0", code)
+	}
+	if !strings.Contains(out, "breakfast") || !strings.Contains(out, "早餐") {
+		t.Errorf("Run(list) output = %q, want it to contain breakfast and 早餐", out)
+	}
+}
+
+func TestRunShow(t *testing.T) {
+	t.Setenv("HOME", t.TempDir())
+	dir := t.TempDir()
+	os.WriteFile(filepath.Join(dir, "breakfast.yaml"), []byte("name: 早餐\noptions:\n  - 面包\n"), 0o644)
+
+	code, out := capture(t, func() int { return Run([]string{"--config-dir", dir, "show", "breakfast"}) })
+	if code != 0 {
+		t.Errorf("Run(show) code = %d, want 0", code)
+	}
+	if !strings.Contains(out, "早餐") || !strings.Contains(out, "面包") {
+		t.Errorf("Run(show) output = %q, want it to contain 早餐 and 面包", out)
+	}
+}
+
+func TestRunShowNoArg(t *testing.T) {
+	if code, _ := capture(t, func() int { return Run([]string{"show"}) }); code != 1 {
+		t.Errorf("Run(show) code = %d, want 1", code)
 	}
 }
